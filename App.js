@@ -9,10 +9,11 @@ export default class StopWatch extends Component {
 
     this.state = {
       timer: null,
-      minutes_Counter: '05',
-      seconds_Counter: '00',
+      minutes_Counter: '00',
+      seconds_Counter: '03',
       startDisable: false,
-      text: 'Add text here'
+      text: 'Add text here',
+      period: 'Active'
     }
   }
 
@@ -20,7 +21,14 @@ export default class StopWatch extends Component {
     clearInterval(this.state.timer);
   }
 
-  onButtonStart = () => {
+  startRestPeriod = () => {
+    console.log('Resting')
+
+    this.setState({
+      minutes_Counter: '00',
+      seconds_Counter: '05',
+      period: 'Resting'
+    });
 
     let timer = setInterval(() => {
 
@@ -36,12 +44,49 @@ export default class StopWatch extends Component {
         minutes_Counter: count.length == 1 ? '0' + count : count,
         seconds_Counter: num.length == 1 ? '0' + num : num
       });
+
+      if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
+        this.setState({startDisable : false})
+        clearInterval(this.state.timer);
+      }
+    }, 1000);
+    this.setState({ timer });
+
+    this.setState({startDisable : true})
+
+  }
+
+  onButtonStart = () => {
+    this.setState({
+      minutes_Counter: '00',
+      seconds_Counter: '05',
+      period: 'Active'
+    });
+
+    let timer = setInterval(() => {
+
+      var num = (Number(this.state.seconds_Counter) - 1).toString(),
+        count = this.state.minutes_Counter;
+
+      if (Number(this.state.seconds_Counter) == 0) {
+        count = (Number(this.state.minutes_Counter) - 1).toString();
+        num = '59';
+      }
+
+      this.setState({
+        minutes_Counter: count.length == 1 ? '0' + count : count,
+        seconds_Counter: num.length == 1 ? '0' + num : num
+      });
+
+      if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
+        clearInterval(this.state.timer);
+        this.startRestPeriod()
+      }
     }, 1000);
     this.setState({ timer });
 
     this.setState({startDisable : true})
   }
-
 
   onButtonStop = () => {
     clearInterval(this.state.timer);
@@ -64,8 +109,13 @@ export default class StopWatch extends Component {
 
         <Text style={styles.counterText}>{this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
 
+        <Text style={{fontWeight: 'bold'}}>
+          <Text style={{color: this.state.period == 'Active' ? 'green' : 'red'}}>
+            {this.state.period}
+          </Text>
+        </Text>
+
         <TextInput
-          label='Email'
           value={this.state.text}
           onChangeText={text => this.setState({ text })}
         />
