@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 
 import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 
+const time = {
+  restingMinutes: '00',
+  restingSeconds: '05',
+  activeMinutes: '00',
+  activeSeconds: '03'
+}
+
 export default class StopWatch extends Component {
 
   constructor(props) {
@@ -9,12 +16,13 @@ export default class StopWatch extends Component {
 
     this.state = {
       timer: null,
-      minutes_Counter: '00',
-      seconds_Counter: '03',
+      minutes_Counter: null,
+      seconds_Counter: null,
       startDisable: false,
       text: 'Add text here',
       period: 'Active'
     }
+
   }
 
   componentWillUnmount() {
@@ -25,8 +33,8 @@ export default class StopWatch extends Component {
     console.log('Resting')
 
     this.setState({
-      minutes_Counter: '00',
-      seconds_Counter: '05',
+      minutes_Counter: time.restingMinutes,
+      seconds_Counter: time.restingSeconds,
       period: 'Resting'
     });
 
@@ -57,9 +65,10 @@ export default class StopWatch extends Component {
   }
 
   onButtonStart = () => {
+    clearInterval(this.state.timer);
     this.setState({
-      minutes_Counter: '00',
-      seconds_Counter: '05',
+      minutes_Counter: time.activeMinutes,
+      seconds_Counter: time.activeSeconds,
       period: 'Active'
     });
 
@@ -110,7 +119,7 @@ export default class StopWatch extends Component {
         <Text style={styles.counterText}>{this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
 
         <Text style={{fontWeight: 'bold'}}>
-          <Text style={{color: this.state.period == 'Active' ? 'green' : 'red'}}>
+          <Text style={{color: this.state.period == 'Active' ? 'green' : 'orange'}}>
             {this.state.period}
           </Text>
         </Text>
