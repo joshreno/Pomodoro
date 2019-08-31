@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native';
 
 const time = {
   restingMinutes: '00',
@@ -92,7 +92,14 @@ export default class StopWatch extends Component {
         if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
           clearInterval(this.state.timer);
           if (this.state.period != "Resting") {
-            this.startRestPeriod()
+
+            Alert.alert(
+              'Resting Time',
+              "It's time to rest!",
+              [{text: 'Start resting period', onPress: () => this.startRestPeriod()}]
+              )
+
+            // this.startRestPeriod()
           } else {
             this.setState({
               period: 'Active',
