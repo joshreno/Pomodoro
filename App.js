@@ -16,13 +16,12 @@ export default class StopWatch extends Component {
 
     this.state = {
       timer: null,
-      minutes_Counter: null,
-      seconds_Counter: null,
-      startDisable: false,
+      minutes_Counter: time.activeMinutes,
+      seconds_Counter: time.activeSeconds,
       text: 'Add text here',
-      period: 'Active'
+      period: 'Active',
+      buttonText: 'Start'
     }
-
   }
 
   componentWillUnmount() {
@@ -54,60 +53,72 @@ export default class StopWatch extends Component {
       });
 
       if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
-        this.setState({startDisable : false})
         clearInterval(this.state.timer);
+        this.setState({
+          period: 'Active',
+          minutes_Counter: time.activeMinutes,
+          seconds_Counter: time.activeSeconds,
+          buttonText: 'Start'
+        });
       }
     }, 1000);
     this.setState({ timer });
-
-    this.setState({startDisable : true})
-
   }
 
   onButtonStart = () => {
-    clearInterval(this.state.timer);
-    this.setState({
-      minutes_Counter: time.activeMinutes,
-      seconds_Counter: time.activeSeconds,
-      period: 'Active'
-    });
+    console.log('LOG')
+    console.log(this.state.buttonText)
+    console.log(this.state.minutes_Counter)
+    console.log(this.state.seconds_Counter)
+    console.log(this.state.period)
+    console.log('    ')
 
-    let timer = setInterval(() => {
+    if (this.state.buttonText == 'Start') {
+      this.setState({ buttonText: 'Stop'});
+      let timer = setInterval(() => {
+        var num = (Number(this.state.seconds_Counter) - 1).toString(),
+          count = this.state.minutes_Counter;
 
-      var num = (Number(this.state.seconds_Counter) - 1).toString(),
-        count = this.state.minutes_Counter;
+        if (Number(this.state.seconds_Counter) == 0) {
+          count = (Number(this.state.minutes_Counter) - 1).toString();
+          num = '59';
+        }
 
-      if (Number(this.state.seconds_Counter) == 0) {
-        count = (Number(this.state.minutes_Counter) - 1).toString();
-        num = '59';
-      }
+        this.setState({
+          minutes_Counter: count.length == 1 ? '0' + count : count,
+          seconds_Counter: num.length == 1 ? '0' + num : num
+        });
 
-      this.setState({
-        minutes_Counter: count.length == 1 ? '0' + count : count,
-        seconds_Counter: num.length == 1 ? '0' + num : num
-      });
-
-      if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
-        clearInterval(this.state.timer);
-        this.startRestPeriod()
-      }
-    }, 1000);
-    this.setState({ timer });
-
-    this.setState({startDisable : true})
+        if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
+          clearInterval(this.state.timer);
+          if (this.state.period != "Resting") {
+            this.startRestPeriod()
+          } else {
+            this.setState({
+              period: 'Active',
+              minutes_Counter: time.activeMinutes,
+              seconds_Counter: time.activeSeconds,
+              buttonText: 'Start'
+            });
+          }
+        }
+      }, 1000);
+      this.setState({ timer });
+    } else {
+      console.log('Clearning')
+      clearInterval(this.state.timer);
+      this.setState({ buttonText: 'Start'});
+    }
   }
-
-  onButtonStop = () => {
-    clearInterval(this.state.timer);
-    this.setState({startDisable : false})
-  }
-
 
   onButtonClear = () => {
+    clearInterval(this.state.timer);
     this.setState({
       timer: null,
-      minutes_Counter: '00',
-      seconds_Counter: '00',
+      minutes_Counter: time.activeMinutes,
+      seconds_Counter: time.activeSeconds,
+      period: 'Active',
+      buttonText: 'Start'
     });
   }
 
@@ -132,30 +143,19 @@ export default class StopWatch extends Component {
         <TouchableOpacity
           onPress={this.onButtonStart}
           activeOpacity={0.6}
-          style={[styles.button, { backgroundColor: this.state.startDisable ? '#B0BEC5' : '#FF6F00' }]} 
-          disabled={this.state.startDisable} >
+          style={[styles.button, { backgroundColor: '#FF6F00' }]}>
 
-          <Text style={styles.buttonText}>START</Text>
-
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={this.onButtonStop}
-          activeOpacity={0.6}
-          style={[styles.button, { backgroundColor:  '#FF6F00'}]} >
-
-          <Text style={styles.buttonText}>STOP</Text>
+          <Text style={styles.buttonText}>{this.state.buttonText}</Text>
 
         </TouchableOpacity>
 
         <TouchableOpacity
           onPress={this.onButtonClear}
           activeOpacity={0.6}
-          style={[styles.button, { backgroundColor: this.state.startDisable ? '#B0BEC5' : '#FF6F00' }]} 
-          disabled={this.state.startDisable} >
-
-          <Text style={styles.buttonText}> CLEAR </Text>
-
+          style={[styles.button, { backgroundColor: '#FF6F00' }]}>
+ 
+          <Text style={styles.buttonText}>Clear</Text>
+ 
         </TouchableOpacity>
 
       </View>
