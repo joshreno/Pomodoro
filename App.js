@@ -53,6 +53,18 @@ export default class StopWatch extends Component {
       });
 
       if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
+        // TODO: API call here
+        let data = new FormData();
+        data.append('timestamp', Date.now());
+        data.append('label', this.state.text);
+        data.append('userid', 'Noobmaster69');
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '10.128.0.4:8000/api/records', true);
+        xhr.onload = function() {
+          console.log(this.responseText);
+        }
+        xhr.send(data);
         clearInterval(this.state.timer);
         this.setState({
           period: 'Active',
