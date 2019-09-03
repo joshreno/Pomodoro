@@ -29,7 +29,7 @@ export default class StopWatch extends Component {
   }
 
   startRestPeriod = () => {
-    console.log('Resting')
+    console.log('Resting');
 
     this.setState({
       minutes_Counter: time.restingMinutes,
@@ -54,17 +54,25 @@ export default class StopWatch extends Component {
 
       if (Number(this.state.seconds_Counter) == 0 && Number(this.state.minutes_Counter) == 0) {
         // TODO: API call here
-        let data = new FormData();
-        data.append('timestamp', Date.now());
-        data.append('label', this.state.text);
-        data.append('userid', 'Noobmaster69');
+        console.log('Calling API');
+        // let data = new FormData();
+        // data.append('timestamp', Date.now());
+        // data.append('label', this.state.text);
+        // data.append('userid', 'Noobmaster69');
+
+        let data = {
+          'timestamp': Date.now(),
+          'label': this.state.text,
+          'userid': 'Noobmaster69'
+        };
 
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '10.128.0.4:8000/api/records', true);
+        xhr.open('POST', 'http://35.226.251.18:8000/api/records', true);
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
         xhr.onload = function() {
           console.log(this.responseText);
         }
-        xhr.send(data);
+        xhr.send(JSON.stringify(data));
         clearInterval(this.state.timer);
         this.setState({
           period: 'Active',
@@ -78,12 +86,12 @@ export default class StopWatch extends Component {
   }
 
   onButtonStart = () => {
-    console.log('LOG')
-    console.log(this.state.buttonText)
-    console.log(this.state.minutes_Counter)
-    console.log(this.state.seconds_Counter)
-    console.log(this.state.period)
-    console.log('    ')
+    console.log('LOG');
+    console.log(this.state.buttonText);
+    console.log(this.state.minutes_Counter);
+    console.log(this.state.seconds_Counter);
+    console.log(this.state.period);
+    console.log('    ');
 
     if (this.state.buttonText == 'Start') {
       this.setState({ buttonText: 'Stop'});
@@ -113,6 +121,19 @@ export default class StopWatch extends Component {
 
             // this.startRestPeriod()
           } else {
+            let data = {
+              'timestamp': Date.now(),
+              'label': this.state.text,
+              'userid': 'Noobmaster69'
+            };
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://35.226.251.18:8000/api/records', true);
+            xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            xhr.onload = function() {
+              console.log(this.responseText);
+            }
+            xhr.send(JSON.stringify(data));
             this.setState({
               period: 'Active',
               minutes_Counter: time.activeMinutes,
@@ -124,7 +145,7 @@ export default class StopWatch extends Component {
       }, 1000);
       this.setState({ timer });
     } else {
-      console.log('Clearning')
+      console.log('Clearning');
       clearInterval(this.state.timer);
       this.setState({ buttonText: 'Start'});
     }
@@ -162,7 +183,7 @@ export default class StopWatch extends Component {
         <TouchableOpacity
           onPress={this.onButtonStart}
           activeOpacity={0.6}
-          style={[styles.button, { backgroundColor: '#FF6F00' }]}>
+          style={[styles.button, { backgroundColor: '#147EFB' }]}>
 
           <Text style={styles.buttonText}>{this.state.buttonText}</Text>
 
@@ -171,7 +192,7 @@ export default class StopWatch extends Component {
         <TouchableOpacity
           onPress={this.onButtonClear}
           activeOpacity={0.6}
-          style={[styles.button, { backgroundColor: '#FF6F00' }]}>
+          style={[styles.button, { backgroundColor: '#147EFB' }]}>
  
           <Text style={styles.buttonText}>Clear</Text>
  
